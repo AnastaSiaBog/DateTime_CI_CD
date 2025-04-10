@@ -1,0 +1,11 @@
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\bin\Debug\net8.0\Library_Date_and_Time.deps.json
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\bin\Debug\net8.0\Library_Date_and_Time.dll
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\bin\Debug\net8.0\Library_Date_and_Time.pdb
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\Library_Date_and_Time.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\Library_Date_and_Time.AssemblyInfoInputs.cache
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\Library_Date_and_Time.AssemblyInfo.cs
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\Library_Date_and_Time.csproj.CoreCompileInputs.cache
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\Library_Date_and_Time.dll
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\refint\Library_Date_and_Time.dll
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\Library_Date_and_Time.pdb
+C:\Users\anast\source\repos\Library_Date_and_Time\Library_Date_and_Time\obj\Debug\net8.0\ref\Library_Date_and_Time.dll
