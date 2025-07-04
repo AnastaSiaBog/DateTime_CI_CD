@@ -1,0 +1,93 @@
+using System.IO;
+using System.Linq;
+using System;
+
+class Transport
+{
+    // метод северо-западного угла
+    public static (int[,], int) northwest(int[] s, int[] d, int[,] c)
+    {
+        int[] supply = (int[])s.Clone();
+        int[] demand = (int[])d.Clone();
+        int[,] plan = new int[s.Length, d.Length];
+        int cost = 0;
+        int i = 0, j = 0; // Индексы текущего поставщика и потребителя
+
+        if (supply.Sum() != demand.Sum()) throw new Exception("не закрыта");
+        Console.WriteLine("метод северо-западного угла:");
+
+        while (i < s.Length && j < d.Length)
+        {
+            int amount = Math.Min(supply[i], demand[j]);
+            plan[i, j] = amount;
+            cost += amount * c[i, j];
+            supply[i] -= amount;
+            demand[j] -= amount;
+
+            Console.WriteLine($"шаг: распределяем {amount} от {i} к {j}, стоимость = {c[i, j]}, общая = {cost}");
+
+            if (supply[i] == 0) i++;
+            if (demand[j] == 0) j++;
+        }
+
+        if (countnonzero(plan) < s.Length + d.Length - 1)
+            Console.WriteLine("вырожденное");
+
+        return (plan, cost);
+    }
+
+    private static int countnonzero(int[,] plan)
+    {
+        int count = 0;
+        for (int i = 0; i < plan.GetLength(0); i++)
+            for (int j = 0; j < plan.GetLength(1); j++)
+                if (plan[i, j] > 0) count++;
+        return count;
+    }
+
+    public static void Main()
+    {
+        string inputFile = "input.txt";
+        string outputFile = "output.txt";
+
+        // Чтение входных данных
+        var lines = File.ReadAllLines(inputFile);
+
+        // Первая строка - массив s
+        int[] s = lines[0].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+
+        // Вторая строка - массив d
+        int[] d = lines[1].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+
+        int rows = lines.Length - 2; // Остальные строки - матрица c
+        int cols = d.Length;
+
+        int[,] c = new int[rows, cols];
+
+        for (int i = 0; i < rows; i++)
+        {
+            var parts = lines[i + 2].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int j = 0; j < cols; j++)
+            {
+                c[i, j] = int.Parse(parts[j]);
+            }
+        }
+
+        // Запуск метода
+        var (plan2, cost2) = northwest(s, d, c);
+
+        // Запись результата в файл
+        using (StreamWriter writer = new StreamWriter(outputFile))
+        {
+            for (int i = 0; i < plan2.GetLength(0); i++)
+            {
+                for (int j = 0; j < plan2.GetLength(1); j++)
+                {
+                    writer.Write($"{plan2[i, j]} ");
+                }
+                writer.WriteLine();
+            }
+            writer.WriteLine($"итоговая стоимость: {cost2}");
+        }
+    }
+}
