@@ -1,0 +1,108 @@
+using System;
+using System.IO;
+using System.Linq;
+
+class Transport
+{
+    // метод минимального элемента
+    // Входные пар-ры:
+    // s (массив чисел, показ-й объемы предложения у поставщиков)
+    // d (массив  чисел, показ-й объемы спроса у потребителей)
+    // c (двумерный массив, показ-й стоимость перевозки)
+    // Выходные пар-ры:
+    // (int[,]) - план перевозок
+    // (int) - общая стоимость перевозок по плану
+
+    public static (int[,], int) minelement(int[] s, int[] d, int[,] c)
+    {
+        int[] supply = (int[])s.Clone(); // Копия массива, чтобы не изменять исходный масс
+        int[] demand = (int[])d.Clone();
+        int[,] plan = new int[s.Length, d.Length]; // Двумерный масс для хранения плана перевозок
+        int cost = 0; // Для хранения общей стоимости перевозок
+
+        if (supply.Sum() != demand.Sum()) throw new Exception("не закрыта"); // Проверка на закрытость
+        Console.WriteLine("метод минимального элемента:");
+
+        while (supply.Sum() > 0) // Цикл, кот-й выполняется до тех пор, пока сумма элементов supply > 0
+        {
+            int mincost = int.MaxValue;
+            int x = 0, y = 0;
+
+            for (int i = 0; i < s.Length; i++) // Перебор пар поставщик-потребитель
+                for (int j = 0; j < d.Length; j++)
+                    if (supply[i] > 0 && demand[j] > 0 && c[i, j] < mincost)
+                    {
+                        mincost = c[i, j];
+                        x = i;
+                        y = j;
+                    }
+
+            int amount = Math.Min(supply[x], demand[y]); // объем перевозки
+            plan[x, y] = amount;
+            cost += amount * c[x, y];
+            supply[x] -= amount;
+            demand[y] -= amount;
+
+            Console.WriteLine($"шаг: распределяем {amount} от {x} к {y}, стоимость = {c[x, y]}, общая = {cost}");
+        }
+
+        if (countnonzero(plan) < s.Length + d.Length - 1)
+            Console.WriteLine("вырожденное");
+
+        return (plan, cost);
+    }
+
+    private static int countnonzero(int[,] plan)
+    {
+        int count = 0;
+        for (int i = 0; i < plan.GetLength(0); i++)
+            for (int j = 0; j < plan.GetLength(1); j++)
+                if (plan[i, j] > 0) count++;
+        return count;
+    }
+
+    public static void Main()
+    {
+        string inputFile = "input.txt";
+        string outputFile = "output.txt";
+
+        // Чтение файла
+        var lines = File.ReadAllLines(inputFile);
+
+        // Первая строка - массив s
+        int[] s = lines[0].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+
+        // Вторая строка - массив d
+        int[] d = lines[1].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+
+        int rows = lines.Length - 2; // Остальные строки - матрица c
+        int cols = d.Length; // Количество столбцов равно длине d
+
+        int[,] c = new int[rows, cols];
+
+        for (int i = 0; i < rows; i++)
+        {
+            var parts = lines[i + 2].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int j = 0; j < cols; j++)
+            {
+                c[i, j] = int.Parse(parts[j]);
+            }
+        }
+
+        var (plan, cost) = minelement(s, d, c);
+
+        // Запись результата в файл
+        using (StreamWriter writer = new StreamWriter(outputFile))
+        {
+            for (int i = 0; i < plan.GetLength(0); i++)
+            {
+                for (int j = 0; j < plan.GetLength(1); j++)
+                {
+                    writer.Write($"{plan[i, j]} ");
+                }
+                writer.WriteLine();
+            }
+            writer.WriteLine($"Общая стоимость: {cost}");
+        }
+    }
+}
