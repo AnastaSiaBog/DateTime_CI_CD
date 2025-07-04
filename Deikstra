@@ -1,0 +1,116 @@
+using System;
+using System.IO;
+
+namespace Deikstra
+{
+    public class MetodDeikstr
+    {
+        int[,] matrix;
+        int start;
+        int rast = 0;
+        int[] posesh;
+
+        public MetodDeikstr(int[,] matrix, int start)
+        {
+            this.matrix = matrix;
+            this.start = start;
+            this.posesh = new int[matrix.GetLength(0)];
+        }
+
+        public int[] GetRasstoania()
+        {
+            int[] rez = new int[matrix.GetLength(0)];
+
+            for (int t = 0; t < rez.Length; t++)
+            {
+                if (t == start - 1)
+                {
+                    rez[t] = 0;
+                }
+                else
+                {
+                    rez[t] = int.MaxValue;
+                }
+            }
+
+            int n = 0;
+            int i = start - 1; // Начинаем с стартовой вершины
+            rast = 0;
+
+            while (n < matrix.GetLength(0) - 1)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    if (matrix[i, j] != 0 && rast + matrix[i, j] < rez[j])
+                    {
+                        rez[j] = rast + matrix[i, j];
+                    }
+                }
+                posesh[i] = 1;
+
+                int min = int.MaxValue;
+                int indexMin = -1;
+
+                for (int k = 0; k < rez.Length; k++)
+                {
+                    if (rez[k] < min && rez[k] != 0 && posesh[k] == 0)
+                    {
+                        min = rez[k];
+                        indexMin = k;
+                    }
+                }
+
+                if (indexMin == -1)
+                {
+                    break; // Все вершины посещены или остались недостижимые
+                }
+
+                i = indexMin;
+                rast = rez[i];
+                n++;
+            }
+            return rez;
+        }
+    }
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string inputFile = "input.txt";
+            string outputFile = "output.txt";
+
+            // Чтение файла
+            string[] lines = File.ReadAllLines(inputFile);
+
+            // Предположим, что первая строка содержит стартовую вершину
+            int start = int.Parse(lines[0].Trim());
+
+            // Остальные строки - матрица
+            int size = lines.Length - 1;
+            int[,] mas = new int[size, size];
+
+            for (int i = 0; i < size; i++)
+            {
+                string[] parts = lines[i + 1].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int j = 0; j < size; j++)
+                {
+                    mas[i, j] = int.Parse(parts[j]);
+                }
+            }
+
+            // Создание и запуск алгоритма
+            MetodDeikstr m = new MetodDeikstr(mas, start);
+            int[] rez = m.GetRasstoania();
+
+            // Запись результата в файл
+            using (StreamWriter writer = new StreamWriter(outputFile))
+            {
+                for (int i = 0; i < rez.Length; i++)
+                {
+                    writer.WriteLine($"{i + 1} {rez[i]}");
+                }
+            }
+        }
+    }
+}
