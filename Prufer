@@ -1,0 +1,97 @@
+using System.Collections.Generic;
+using System;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        public static List<int> CodePruifer(int[,] mas, int n)
+        {
+            int[] povtor = new int[n + 1];
+
+            //сколько раз встрeчается каждая вершина
+            for (int i = 0; i < mas.GetLength(0); i++)
+            {
+                int p = mas[i, 0];
+                int v = mas[i, 1];
+                povtor[p]++;
+                povtor[v]++;
+            }
+
+            // поиск листов
+            var lists = new List<int>();
+            for (int i = 1; i <= n; i++)
+            {
+                if (povtor[i] == 1)
+                    lists.Add(i);
+            }
+
+            var otvet = new List<int>();
+
+            for (int i = 0; i < n - 2; i++)
+            {
+                int minList = lists.Min();  // выбор минимального листа
+                lists.Remove(minList);
+
+                int roditel = 0;
+                for (int j = 0; j < mas.GetLength(0); j++)
+                {
+                    int p = mas[j, 0];
+                    int v = mas[j, 1];
+
+
+                    if (p == minList)
+                    {
+                        roditel = v;
+                        mas[j, 0] = -1;
+                        mas[j, 1] = -1;
+                        break;
+                    }
+                    else if (v == minList)
+                    {
+                        roditel = p;
+                        mas[j, 0] = -1;
+                        mas[j, 1] = -1;
+                        break;
+                    }
+                }
+
+                otvet.Add(roditel);
+
+                povtor[roditel]--;
+                if (povtor[roditel] == 1)
+                    lists.Add(roditel);
+            }
+
+            return otvet;
+        }
+
+        static void Main()
+        {
+            //int[,] test = { { 1, 4 }, { 1, 3 }, { 1, 2 }, { 3, 10 }, { 2, 5 }, { 2, 6 }, { 5, 7 }, { 6, 8 }, { 6, 9 } };
+
+            string[] lines = File.ReadAllLines("isx.txt");
+
+            int rows = lines.Length;
+            int cols = lines[0].Split(' ').Length;
+
+            int[,] mas = new int[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+            {
+                string[] parts = lines[i].Split(' ');
+                for (int j = 0; j < cols; j++)
+                {
+                    mas[i, j] = int.Parse(parts[j]);
+                }
+            }
+
+            List<int> rez = CodePruifer(mas, lines.Length + 1);
+            Console.WriteLine(string.Join(" ", rez));
+
+            File.WriteAllText("otvet.txt", string.Join(" ", rez));
+
+            Console.ReadKey();
+        }
+    }
+}
